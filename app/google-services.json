@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1004080688733",
+    "project_id": "example-7a49b",
+    "storage_bucket": "example-7a49b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1004080688733:android:644bf03be2ef35931ea7b4",
+        "android_client_info": {
+          "package_name": "us.smt.mylearningcentre"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5gN41eL-W9fruHFYnyMHNzmhGjSJzkC0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
