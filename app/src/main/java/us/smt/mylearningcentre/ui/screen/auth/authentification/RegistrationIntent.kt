@@ -8,4 +8,5 @@ sealed interface RegistrationIntent {
     data class RePasswordChanged(val password: String) : RegistrationIntent
     data object Register : RegistrationIntent
     data object Back : RegistrationIntent
+    data object CloseError : RegistrationIntent
 }

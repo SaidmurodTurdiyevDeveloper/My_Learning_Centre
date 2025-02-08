@@ -22,12 +22,12 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import firebase.com.protolitewrapper.BuildConfig
 
 class AboutScreen : Screen {
     @Composable
@@ -38,7 +38,7 @@ class AboutScreen : Screen {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AboutScreenContent() {
+private fun AboutScreenContent() {
     val navigator = LocalNavigator.current
 
     Scaffold(
@@ -54,9 +54,9 @@ fun AboutScreenContent() {
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF1E88E5), // Blue color for the app bar
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
                 ),
                 title = { Text(text = "About", style = MaterialTheme.typography.headlineMedium) },
             )
@@ -87,7 +87,7 @@ fun AboutScreenContent() {
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Version: 1.0.0",
+                    text = "Version: ${BuildConfig.VERSION_NAME}",
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center
                 )
@@ -100,7 +100,7 @@ fun AboutScreenContent() {
                 )
             }
             Text(
-                text = "Developed by: Shakhzoda Mirsodiqova\n© 2024 All Rights Reserved",
+                text = "Developed by: Turdiyev Saidmurod\n© 2025 All Rights Reserved",
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -111,6 +111,6 @@ fun AboutScreenContent() {
 
 @Preview(showBackground = true)
 @Composable
-fun AboutScreenPreview() {
+private fun AboutScreenPreview() {
     AboutScreenContent()
 }

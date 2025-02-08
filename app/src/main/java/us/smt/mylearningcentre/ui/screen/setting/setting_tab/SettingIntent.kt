@@ -3,6 +3,7 @@ package us.smt.mylearningcentre.ui.screen.setting.setting_tab
 sealed interface SettingIntent {
     data object OpenAbout : SettingIntent
     data object OpenHelp : SettingIntent
+    data class ChangeDarkMode(val isDark: Boolean) : SettingIntent
     data object Leave : SettingIntent
     data object OpenChangePresident : SettingIntent
     data object CloseChangePresident : SettingIntent

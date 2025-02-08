@@ -12,6 +12,7 @@ class LocalStorage @Inject constructor(
     )
     var isLoggedIn: Boolean by BooleanPreference(sharedPreferences, false)
     var isUserCreated: Boolean by BooleanPreference(sharedPreferences, false)
+    var isDarkTheme: Boolean by BooleanPreference(sharedPreferences, false)
     var userId: String by StringPreference(sharedPreferences, "")
     var clubId: String by StringPreference(sharedPreferences, "")
     var fcmToken: String by StringPreference(sharedPreferences, "")

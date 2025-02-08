@@ -5,6 +5,7 @@ import us.smt.mylearningcentre.data.model.StudentData
 
 data class SettingState(
     val isPresident: Boolean = false,
+    val isNight: Boolean = false,
     val clubData: ClubData? = null,
     val isOpenChangePresidentDialog: Boolean = false,
     val isLavingClub: Boolean = false,

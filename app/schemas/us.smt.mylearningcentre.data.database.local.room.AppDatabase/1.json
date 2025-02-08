@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e3bcaa4ca6864fd40b76192e115dd469",
+    "identityHash": "61f3ea196269013f76a6635dcaf01534",
     "entities": [
       {
         "tableName": "application_form_data",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `isAccepted` INTEGER NOT NULL, `studentId` TEXT NOT NULL, `clubId` TEXT NOT NULL, `fcmToken` TEXT NOT NULL, `description` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `isAccepted` INTEGER NOT NULL, `studentId` TEXT NOT NULL, `studentName` TEXT NOT NULL, `clubId` TEXT NOT NULL, `fcmToken` TEXT NOT NULL, `description` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -23,6 +23,12 @@
           {
             "fieldPath": "studentId",
             "columnName": "studentId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "studentName",
+            "columnName": "studentName",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -282,7 +288,7 @@
       },
       {
         "tableName": "task_data",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `clubId` TEXT NOT NULL, `title` TEXT NOT NULL, `isCompleted` INTEGER NOT NULL, `description` TEXT NOT NULL, `acceptedMembers` TEXT NOT NULL, `rejectedMembers` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `clubId` TEXT NOT NULL, `isYouJoined` INTEGER NOT NULL, `isYouRejected` INTEGER NOT NULL, `title` TEXT NOT NULL, `isCompleted` INTEGER NOT NULL, `description` TEXT NOT NULL, `acceptedMembers` TEXT NOT NULL, `acceptedMemberNames` TEXT NOT NULL, `rejectedMembers` TEXT NOT NULL, `rejectedMemberNames` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -294,6 +300,18 @@
             "fieldPath": "clubId",
             "columnName": "clubId",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isYouJoined",
+            "columnName": "isYouJoined",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isYouRejected",
+            "columnName": "isYouRejected",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -321,8 +339,20 @@
             "notNull": true
           },
           {
+            "fieldPath": "acceptedMemberNames",
+            "columnName": "acceptedMemberNames",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
             "fieldPath": "rejectedMembers",
             "columnName": "rejectedMembers",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rejectedMemberNames",
+            "columnName": "rejectedMemberNames",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -340,7 +370,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e3bcaa4ca6864fd40b76192e115dd469')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '61f3ea196269013f76a6635dcaf01534')"
     ]
   }
 }

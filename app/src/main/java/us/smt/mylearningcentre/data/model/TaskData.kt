@@ -9,9 +9,13 @@ import us.smt.mylearningcentre.data.database.local.room.converter.StringListConv
 data class TaskData(
     @PrimaryKey val id: String,
     val clubId: String,
+    val isYouJoined:Boolean,
+    val isYouRejected:Boolean,
     val title: String,
     val isCompleted: Boolean,
     val description: String,
     @TypeConverters(StringListConverter::class) val acceptedMembers: List<String>,
-    @TypeConverters(StringListConverter::class) val rejectedMembers: List<String>
+    @TypeConverters(StringListConverter::class) val acceptedMemberNames: List<String>,
+    @TypeConverters(StringListConverter::class) val rejectedMembers: List<String>,
+    @TypeConverters(StringListConverter::class) val rejectedMemberNames: List<String>
 )

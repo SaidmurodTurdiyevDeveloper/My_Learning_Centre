@@ -11,6 +11,7 @@ data class ApplicationFormData(
      * this need for update Student information after accept or reject application form
      */
     val studentId: String,
+    val studentName: String,
     val clubId: String,
     val fcmToken: String,
     val description: String

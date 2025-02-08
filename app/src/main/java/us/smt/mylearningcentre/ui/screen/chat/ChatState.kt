@@ -6,7 +6,7 @@ import us.smt.mylearningcentre.ui.utils.TextFieldData
 import us.smt.mylearningcentre.util.UserError
 
 data class ChatState(
-    val isLoading: Boolean = true,
+    val isLoading: Boolean = false,
     val messages: List<MessageData> = emptyList(),
     val error: UserError? = null,
     val user: StudentData? = null,

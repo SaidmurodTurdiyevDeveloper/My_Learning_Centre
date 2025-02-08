@@ -43,7 +43,7 @@ class HelpScreen : Screen {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HelpScreenContent() {
+private fun HelpScreenContent() {
     val navigator = LocalNavigator.current
     val context = LocalContext.current
     Scaffold(
@@ -95,7 +95,6 @@ fun HelpScreenContent() {
                 topics = listOf(
                     "How to use the app?",
                     "Account settings",
-                    "Payment and billing",
                     "Privacy and security",
                     "Other issues"
                 )
@@ -105,7 +104,7 @@ fun HelpScreenContent() {
 }
 
 @Composable
-fun HelpTopicsList(topics: List<String>) {
+private fun HelpTopicsList(topics: List<String>) {
     val context = LocalContext.current
     LazyColumn {
         items(topics) { topic ->
@@ -138,7 +137,7 @@ private fun openEmailClient(
 ) {
     val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
         data = Uri.parse("mailto:") // Only email apps should handle this
-        putExtra(Intent.EXTRA_EMAIL, arrayOf("shakhzodamirsodiqova@gmail.com")) // Set recipient
+        putExtra(Intent.EXTRA_EMAIL, arrayOf("saidmurod98developer@gmail.com")) // Set recipient
         putExtra(Intent.EXTRA_SUBJECT, topic.ifBlank { "Help" })
         putExtra(Intent.EXTRA_TEXT, "Help me")
     }
@@ -153,6 +152,6 @@ private fun openEmailClient(
 
 @Preview(showBackground = true)
 @Composable
-fun HelpScreenPreview() {
+private fun HelpScreenPreview() {
     HelpScreenContent()
 }

@@ -25,7 +25,9 @@ class TaskRepositoryImpl @Inject constructor(
         const val clubId = "clubId"
         const val isComplete = "isComplete"
         const val rejectedMember = "rejectedMember"
+        const val rejectedMemberName = "rejectedMemberName"
         const val acceptedMember = "acceptedMember"
+        const val acceptedMemberName = "acceptedMemberName"
     }
 
     override fun getClubTasks(clubId: String): Flow<ResponseResult<List<TaskData>>> = flow {
@@ -34,15 +36,26 @@ class TaskRepositoryImpl @Inject constructor(
             val result = firebase.getAllData(
                 collectionName = FireBaseHelper.collectionTask
             )
+
             val ls = result.map { document ->
                 val data = document.data
+                val joinedMembers = (data?.get(acceptedMember) as? List<*>)?.filterIsInstance<String>() ?: emptyList()
+                val joinedMemberNames = (data?.get(acceptedMemberName) as? List<*>)?.filterIsInstance<String>() ?: emptyList()
+                val rejectedMembers = (data?.get(rejectedMember) as? List<*>)?.filterIsInstance<String>() ?: emptyList()
+                val rejectedMemberNames = (data?.get(rejectedMemberName) as? List<*>)?.filterIsInstance<String>() ?: emptyList()
+                val isYouJoined = joinedMembers.contains(localStorage.userId)
+                val isYouRejected = rejectedMembers.contains(localStorage.userId)
                 TaskData(
                     id = document.id,
                     title = data?.get(title) as? String ?: "",
+                    isYouJoined = isYouJoined,
+                    isYouRejected = isYouRejected,
                     description = data?.get(description) as? String ?: "",
                     clubId = data?.get(TaskRepositoryImpl.clubId) as? String ?: "",
-                    rejectedMembers = (data?.get(rejectedMember) as? List<*>)?.filterIsInstance<String>() ?: emptyList(),
-                    acceptedMembers = (data?.get(acceptedMember) as? List<*>)?.filterIsInstance<String>() ?: emptyList(),
+                    rejectedMembers = rejectedMembers.filter { it.isNotBlank() },
+                    rejectedMemberNames = rejectedMemberNames.filter { it.isNotBlank() },
+                    acceptedMembers = joinedMembers.filter { it.isNotBlank() },
+                    acceptedMemberNames = joinedMemberNames.filter { it.isNotBlank() },
                     isCompleted = data?.get(isComplete) as? Boolean ?: false,
                 )
             }.filter {
@@ -50,7 +63,7 @@ class TaskRepositoryImpl @Inject constructor(
             }
             db.deleteAll()
             db.insertAll(ls)
-            emit(ResponseResult.Error(NetworkError.InternetConnection(ls)))
+            emit(ResponseResult.Success(ls))
         } catch (e: IOException) {
             val ls = db.getAll()
             emit(ResponseResult.Error(NetworkError.InternetConnection(ls)))
@@ -66,8 +79,11 @@ class TaskRepositoryImpl @Inject constructor(
                 title to task.title,
                 description to task.description,
                 clubId to localStorage.clubId,
+                isComplete to false,
                 rejectedMember to emptyList<String>(),
+                rejectedMemberName to emptyList<String>(),
                 acceptedMember to emptyList<String>(),
+                acceptedMemberName to emptyList<String>(),
             )
             val id = firebase.addNewItem(
                 mapData = map,
@@ -78,8 +94,12 @@ class TaskRepositoryImpl @Inject constructor(
                 title = task.title,
                 description = task.description,
                 clubId = localStorage.clubId,
+                isYouJoined = false,
+                isYouRejected = false,
                 rejectedMembers = emptyList(),
+                rejectedMemberNames = emptyList(),
                 acceptedMembers = emptyList(),
+                acceptedMemberNames = emptyList(),
                 isCompleted = false
             )
             db.insert(newData)
@@ -94,14 +114,37 @@ class TaskRepositoryImpl @Inject constructor(
     override fun updateTask(task: TaskData): Flow<ResponseResult<Boolean>> = flow {
         try {
             val firebase = FireBaseHelper.getInstance()
-            val map = mapOf(
+            val map = hashMapOf<String, Any>(
                 title to task.title,
                 description to task.description,
-                clubId to localStorage.clubId,
-                rejectedMember to task.rejectedMembers,
-                acceptedMember to task.acceptedMembers,
-                isComplete to task.isCompleted
+                clubId to localStorage.clubId
             )
+            if (task.isCompleted) {
+                map[isComplete] = true
+                map[acceptedMember] = task.acceptedMembers
+                map[acceptedMemberName] = task.acceptedMemberNames
+                map[rejectedMember] = task.rejectedMembers
+                map[rejectedMemberName] = task.rejectedMemberNames
+
+            } else if (task.isYouJoined) {
+                map[isComplete] = false
+                map[acceptedMember] = task.acceptedMembers + localStorage.userId
+                map[acceptedMemberName] = task.acceptedMemberNames + localStorage.userName
+                map[rejectedMember] = task.rejectedMembers
+                map[rejectedMemberName] = task.rejectedMemberNames
+            } else if (task.isYouRejected) {
+                map[isComplete] = false
+                map[acceptedMember] = task.acceptedMembers
+                map[acceptedMemberName] = task.acceptedMemberNames
+                map[rejectedMember] = task.rejectedMembers + localStorage.userId
+                map[rejectedMemberName] = task.rejectedMemberNames + localStorage.userName
+            } else {
+                map[isComplete] = false
+                map[acceptedMember] = task.acceptedMembers
+                map[acceptedMemberName] = task.acceptedMemberNames
+                map[rejectedMember] = task.rejectedMembers
+                map[rejectedMemberName] = task.rejectedMemberNames
+            }
             firebase.updateItem(
                 id = task.id,
                 newMap = map,

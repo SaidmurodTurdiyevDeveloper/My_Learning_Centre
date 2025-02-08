@@ -20,11 +20,12 @@ class ApplicationRepositoryImpl @Inject constructor(
     private val db: ApplicationFormDao
 ) : ApplicationRepository {
     companion object {
-        const val clubId = "ClubId"
-        const val studentId = "StudentId"
-        const val isAccepted = "IsAccepted"
-        const val userFcmToken = "UserFcmToken"
-        const val applicationDescription = "ApplicationDescription"
+        const val clubId = "clubId"
+        const val studentId = "studentId"
+        const val studentName = "studentName"
+        const val isAccepted = "isAccepted"
+        const val userFcmToken = "userFcmToken"
+        const val applicationDescription = "applicationDescription"
     }
 
     override fun createApplicationToJoinClub(data: CreateApplicationFormData): Flow<ResponseResult<Boolean>> = flow {
@@ -33,6 +34,7 @@ class ApplicationRepositoryImpl @Inject constructor(
             val map = hashMapOf(
                 clubId to data.clubId,
                 studentId to localStorage.userId,
+                studentName to localStorage.userName,
                 isAccepted to false,
                 applicationDescription to data.description
             )
@@ -46,12 +48,13 @@ class ApplicationRepositoryImpl @Inject constructor(
                 collectionName = FireBaseHelper.collectionApplication
             )
 
-            val createData=ApplicationFormData(
-                id =id,
+            val createData = ApplicationFormData(
+                id = id,
                 isAccepted = false,
                 studentId = localStorage.userId,
+                studentName = localStorage.userName,
                 clubId = data.clubId,
-                fcmToken = token?:"",
+                fcmToken = token ?: "",
                 description = data.description
             )
             db.insert(createData)
@@ -132,14 +135,18 @@ class ApplicationRepositoryImpl @Inject constructor(
                     id = document.id,
                     isAccepted = data?.get(isAccepted) as? Boolean ?: false,
                     studentId = data?.get(studentId) as? String ?: "",
-                    clubId = data?.get(clubId) as? String ?: "",
+                    studentName = data?.get(studentName) as? String ?: "",
+                    clubId = data?.get(ApplicationRepositoryImpl.clubId) as? String ?: "",
                     fcmToken = data?.get(userFcmToken) as? String ?: "",
                     description = data?.get(applicationDescription) as? String ?: ""
                 )
             }.filter {
                 it.clubId == clubId
             }
-            db.deleteAll()
+            val localList = db.getAll()
+            if (localList.isNotEmpty()) {
+                db.deleteAll()
+            }
             db.insertAll(ls)
             emit(ResponseResult.Success(ls))
         } catch (e: IOException) {
@@ -164,6 +171,7 @@ class ApplicationRepositoryImpl @Inject constructor(
                 id = document?.id ?: "",
                 isAccepted = responseData?.get(isAccepted) as? Boolean ?: false,
                 studentId = responseData?.get(studentId) as? String ?: "",
+                studentName = responseData?.get(studentName) as? String ?: "",
                 clubId = responseData?.get(clubId) as? String ?: "",
                 fcmToken = responseData?.get(userFcmToken) as? String ?: "",
                 description = responseData?.get(applicationDescription) as? String ?: ""

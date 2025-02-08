@@ -22,7 +22,7 @@ class MessageRepositoryImpl @Inject constructor(
         const val senderName = "senderName"
         const val senderId = "senderId"
         const val text = "message"
-        const val clubId = "message"
+        const val clubId = "clubId"
     }
 
     override fun sendMessage(message: String): Flow<ResponseResult<Boolean>> = flow {

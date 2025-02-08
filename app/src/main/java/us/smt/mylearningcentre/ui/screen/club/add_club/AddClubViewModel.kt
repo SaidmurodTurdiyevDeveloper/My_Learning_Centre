@@ -28,8 +28,8 @@ class AddClubViewModel @Inject constructor(
             is AddClubIntent.ChangeClubCategory -> changeCategory(intent.category)
             is AddClubIntent.ChangeClubName -> changeClubName(intent.name)
             is AddClubIntent.ChangeDescription -> changeDescription(intent.description)
-            AddClubIntent.CloseCreateNewClubCategoryDialog -> closeCreateNewClubCategoryDialog()
             is AddClubIntent.CreateNewClubCategory -> createNewClubCategory(intent.name)
+            AddClubIntent.CloseCreateNewClubCategoryDialog -> closeCreateNewClubCategoryDialog()
             AddClubIntent.OpenCreateNewClubCategoryDialog -> openCreateNewClubCategoryDialog()
         }
     }
@@ -104,6 +104,7 @@ class AddClubViewModel @Inject constructor(
             update(state = state.value.copy(clubCategory = state.value.clubCategory.copy(error = TextViewError.Empty)))
             return
         }
+        update(state = state.value.copy(loading = true))
         useCase.createClubDetails(
             data = CreateUpdateClubData(
                 name = state.value.clubName.text,
@@ -112,7 +113,13 @@ class AddClubViewModel @Inject constructor(
             )
         ).onEach { result ->
             when (result) {
-                is ResponseResult.Error -> update(state = state.value.copy(error = result.error))
+                is ResponseResult.Error -> update(
+                    state = state.value.copy(
+                        error = result.error,
+                        loading = false
+                    )
+                )
+
                 is ResponseResult.Success -> {
                     navigate(MainTabScreen())
                 }

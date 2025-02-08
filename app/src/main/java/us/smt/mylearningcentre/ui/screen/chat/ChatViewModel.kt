@@ -75,7 +75,7 @@ class ChatViewModel @Inject constructor(
                                     val data = result.error.data
                                     if (data != null && data is List<*>) {
                                         val first = data.firstOrNull()
-                                        if (first!=null&&first is MessageData) {
+                                        if (first != null && first is MessageData) {
                                             update(state = state.value.copy(messages = data as List<MessageData>))
                                         }
                                     } else {
@@ -108,10 +108,11 @@ class ChatViewModel @Inject constructor(
 
     private fun sendMessage(message: String) {
         if (message.isBlank()) return
+        update(state = state.value.copy(isLoading = true))
         useCase.sendMessage(message).onEach { result ->
             when (result) {
-                is ResponseResult.Error -> update(state = state.value.copy(error = result.error))
-                is ResponseResult.Success -> update(state = state.value.copy(text = TextFieldData()))
+                is ResponseResult.Error -> update(state = state.value.copy(error = result.error, isLoading = false))
+                is ResponseResult.Success -> update(state = state.value.copy(text = TextFieldData(), isLoading = false))
             }
         }.launchIn(viewModelScope)
 

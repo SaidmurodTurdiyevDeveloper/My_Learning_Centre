@@ -18,13 +18,12 @@ class AuthRepositoryImpl @Inject constructor(
     private val localStorage: LocalStorage
 ) : AuthRepository {
     companion object {
-        const val clubId = "ClubId"
+        const val clubId = "clubId"
         const val email = "email"
-        const val name = "Name"
-        const val surname = "Surname"
+        const val name = "name"
+        const val surname = "surname"
         const val fcmToken = "fcmToken"
-        const val isPresident = "isPresident"
-        const val isWaitingApplication = "IsWaitingApplication"
+        const val isWaitingApplication = "isWaitingApplication"
     }
 
     override fun login(email: String, password: String): Flow<ResponseResult<Boolean>> = flow {
@@ -45,12 +44,13 @@ class AuthRepositoryImpl @Inject constructor(
                         name = data?.get(name) as? String ?: "",
                         isWaitingApplication = data?.get(isWaitingApplication) as? String ?: "",
                         fcmToken = data?.get(fcmToken) as? String ?: "",
-                        isPresident = data?.get(isPresident) as? Boolean ?: false
+                        isPresident = false
                     )
                 }
                 val currentUser = users.firstOrNull {
                     it.email == email
                 }
+
                 if (currentUser != null) {
                     localStorage.clubId = currentUser.clubId
                     localStorage.waitingApplicationId = currentUser.isWaitingApplication

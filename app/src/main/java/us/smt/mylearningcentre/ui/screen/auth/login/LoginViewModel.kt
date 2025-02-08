@@ -2,7 +2,6 @@ package us.smt.mylearningcentre.ui.screen.auth.login
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import us.smt.mylearningcentre.domen.use_case.LoginUseCase
@@ -55,9 +54,10 @@ class LoginViewModel @Inject constructor(
             update(state = state.value.copy(password = state.value.password.copy(error = passwordError)))
             return
         }
+        update(state = state.value.copy(isLoading = true))
         useCase.login(email = state.value.email.text, password = state.value.password.text).onEach { result ->
             when (result) {
-                is ResponseResult.Error -> update(state = state.value.copy(error = result.error))
+                is ResponseResult.Error -> update(state = state.value.copy(error = result.error, isLoading = false))
                 is ResponseResult.Success -> {
                     update(state = state.value.copy(isUserCantCreate = result.data, isLoading = false, error = null))
                     navigate(MainTabScreen())

@@ -38,17 +38,17 @@ class ClubDetailsViewModel @Inject constructor(
                     if (result.error is NetworkError.InternetConnection<*>) {
                         val data = result.error.data
                         if (data != null && data is ClubDetailsData) {
-                            update(state = state.value.copy(club = data))
+                            update(state = state.value.copy(club = data, isLoading = false))
                         } else {
-                            update(state = state.value.copy(error = result.error))
+                            update(state = state.value.copy(error = result.error, isLoading = false))
                         }
                     } else {
-                        update(state = state.value.copy(error = result.error))
+                        update(state = state.value.copy(error = result.error, isLoading = false))
                     }
                 }
 
                 is ResponseResult.Success -> {
-                    update(state = state.value.copy(club = result.data))
+                    update(state = state.value.copy(club = result.data, isLoading = false))
                     getClubPresident(result.data.presidentId)
                 }
             }
@@ -64,18 +64,18 @@ class ClubDetailsViewModel @Inject constructor(
                         if (data != null && data is List<*>) {
                             val first = data.firstOrNull()
                             if (first != null && first is StudentData) {
-                                update(state = state.value.copy(clubMembers = data as List<StudentData>))
+                                update(state = state.value.copy(clubMembers = data as List<StudentData>, isLoading = false))
                             }
                         } else {
-                            update(state = state.value.copy(error = result.error))
+                            update(state = state.value.copy(error = result.error, isLoading = false))
                         }
                     } else {
-                        update(state = state.value.copy(error = result.error))
+                        update(state = state.value.copy(error = result.error, isLoading = false))
                     }
                 }
 
                 is ResponseResult.Success -> {
-                    update(state = state.value.copy(clubMembers = result.data))
+                    update(state = state.value.copy(clubMembers = result.data, isLoading = false))
                 }
             }
         }.launchIn(viewModelScope)
@@ -88,17 +88,17 @@ class ClubDetailsViewModel @Inject constructor(
                     if (result.error is NetworkError.InternetConnection<*>) {
                         val data = result.error.data
                         if (data != null && data is StudentData) {
-                            update(state = state.value.copy(president = data))
+                            update(state = state.value.copy(president = data, isLoading = false))
                         } else {
-                            update(state = state.value.copy(error = result.error))
+                            update(state = state.value.copy(error = result.error, isLoading = false))
                         }
                     } else {
-                        update(state = state.value.copy(error = result.error))
+                        update(state = state.value.copy(error = result.error, isLoading = false))
                     }
                 }
 
                 is ResponseResult.Success -> {
-                    update(state = state.value.copy(president = result.data))
+                    update(state = state.value.copy(president = result.data, isLoading = false))
                     getClubMembers()
                 }
             }

@@ -1,4 +1,4 @@
-package us.smt.mylearningcentre.ui.screen.club.add_club
+package us.smt.mylearningcentre.ui.screen.task
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -36,24 +36,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
-import us.smt.mylearningcentre.ui.designs.DropDown
 import us.smt.mylearningcentre.ui.designs.MultilineTextView
 import us.smt.mylearningcentre.ui.designs.SimpleTextView
-import us.smt.mylearningcentre.ui.dialog.CreateCategoryDialog
 
-class AddNewClubScreen : Screen {
+class CreateTaskScreen : Screen {
     @Composable
     override fun Content() {
-        val viewModel = getViewModel<AddClubViewModel>()
-        val state by viewModel.state.collectAsState()
-        AddNewClubScreenContent(state = state, onAction = viewModel::onAction)
+        val viewModel = getViewModel<CreateTaskViewModel>()
+        val uiState by viewModel.state.collectAsState()
+        AddNewClubScreenContent(state = uiState, onAction = viewModel::onAction)
     }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun AddNewClubScreenContent(state: AddClubState, onAction: (AddClubIntent) -> Unit) {
-    if (state.loading) {
+private fun AddNewClubScreenContent(
+    state: CreateTaskState,
+    onAction: (CreateTaskIntent) -> Unit
+) {
+    if (state.isLoading) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -67,7 +69,7 @@ private fun AddNewClubScreenContent(state: AddClubState, onAction: (AddClubInten
                 TopAppBar(
                     title = { Text(text = "Create New Club") },
                     navigationIcon = {
-                        IconButton(onClick = { onAction(AddClubIntent.Back) }) {
+                        IconButton(onClick = { onAction(CreateTaskIntent.Back) }) {
                             Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                         }
                     },
@@ -88,32 +90,19 @@ private fun AddNewClubScreenContent(state: AddClubState, onAction: (AddClubInten
                         .background(MaterialTheme.colorScheme.background)
                 ) {
                     SimpleTextView(
-                        hint = "Club Name",
-                        state = state.clubName,
-                        onChange = { name -> onAction(AddClubIntent.ChangeClubName(name)) }
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    DropDown(
-                        modifier = Modifier.fillMaxWidth(),
-                        list = state.categoryList,
-                        selectedValue = state.selectedCategory,
-                        getText = {
-                            it.name
-                        },
-                        onSelectNewItem = {
-                            onAction(AddClubIntent.ChangeClubCategory(it))
-                        },
-                        addNewItem = { onAction(AddClubIntent.OpenCreateNewClubCategoryDialog) }
+                        hint = "Task title",
+                        state = state.taskTitle,
+                        onChange = { name -> onAction(CreateTaskIntent.TitleChanged(name)) }
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     MultilineTextView(
-                        hint = "Description",
-                        state = state.clubDescription,
-                        onChange = { description -> onAction(AddClubIntent.ChangeDescription(description)) }
+                        hint = "Task description",
+                        state = state.description,
+                        onChange = { description -> onAction(CreateTaskIntent.DescriptionChanged(description)) }
                     )
 
                     Button(
-                        onClick = { onAction(AddClubIntent.Save) },
+                        onClick = { onAction(CreateTaskIntent.CreateTask) },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -132,12 +121,6 @@ private fun AddNewClubScreenContent(state: AddClubState, onAction: (AddClubInten
                 }
             }
         )
-        if (state.isOpenCreateNewCategoryDialog) {
-            CreateCategoryDialog(
-                onDismiss = { onAction(AddClubIntent.CloseCreateNewClubCategoryDialog) },
-                onAddItem = { name -> onAction(AddClubIntent.CreateNewClubCategory(name)) }
-            )
-        }
     }
 }
 
@@ -145,7 +128,7 @@ private fun AddNewClubScreenContent(state: AddClubState, onAction: (AddClubInten
 @Composable
 private fun AddNewClubScreenContentPrevLight() {
     MaterialTheme(colorScheme = lightColorScheme()) {
-        AddNewClubScreenContent(state = AddClubState(), onAction = {})
+        AddNewClubScreenContent(state = CreateTaskState(), onAction = {})
     }
 }
 
@@ -153,6 +136,6 @@ private fun AddNewClubScreenContentPrevLight() {
 @Composable
 private fun AddNewClubScreenContentPrevDark() {
     MaterialTheme(colorScheme = darkColorScheme()) {
-        AddNewClubScreenContent(state = AddClubState(), onAction = {})
+        AddNewClubScreenContent(state = CreateTaskState(), onAction = {})
     }
 }

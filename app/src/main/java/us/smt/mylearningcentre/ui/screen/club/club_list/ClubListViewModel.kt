@@ -39,18 +39,18 @@ class ClubListViewModel @Inject constructor(
                         if (data != null && data is List<*>) {
                             val first = data.firstOrNull()
                             if (first != null && first is ClubData) {
-                                update(state = state.value.copy(list = data as List<ClubData>))
+                                update(state = state.value.copy(list = data as List<ClubData>, isLoading = false))
                             }
                         } else {
-                            update(state = state.value.copy(error = result.error))
+                            update(state = state.value.copy(error = result.error, isLoading = false))
                         }
                     } else {
-                        update(state = state.value.copy(error = result.error))
+                        update(state = state.value.copy(error = result.error, isLoading = false))
                     }
                 }
 
                 is ResponseResult.Success -> {
-                    update(state = state.value.copy(list = result.data))
+                    update(state = state.value.copy(list = result.data, isLoading = false))
                 }
             }
         }.launchIn(viewModelScope)

@@ -16,6 +16,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -68,7 +70,10 @@ private fun ClubDetailsScreenContent(
                     IconButton(onClick = {
                         onAction(ClubDetailsIntent.Back)
                     }) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -79,76 +84,104 @@ private fun ClubDetailsScreenContent(
             )
         },
         content = { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(16.dp)
-                    .verticalScroll(rememberScrollState())
-                    .background(MaterialTheme.colorScheme.background),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
-                    textAlign = TextAlign.Center,
-                    fontSize = 24.sp,
-                    text = uiState.club?.name ?: "",
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-
-                InfoRow(label = "Category", value = uiState.club?.category ?: "")
-                InfoRow(label = "President", value = "${uiState.president?.name ?: ""} ${uiState.president?.surname ?: ""}")
-
-                Text(
-                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
-                    textAlign = TextAlign.Center,
-                    text = "Members",
-                    fontSize = 16.sp,
-                    modifier = Modifier.padding(top = 18.dp)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                uiState.clubMembers.forEach {
-                    Text(
-                        style = MaterialTheme.typography.bodyMedium,
-                        text = it.name + " " + it.surname,
-                        fontSize = 16.sp,
-                        modifier = Modifier.padding(vertical = 2.dp)
-                    )
-                }
-
-                Text(
-                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
-                    textAlign = TextAlign.Center,
-                    fontSize = 18.sp,
-                    text = "Description",
-                    modifier = Modifier.padding(top = 16.dp)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    style = MaterialTheme.typography.bodySmall,
-                    textAlign = TextAlign.Center,
-                    fontSize = 16.sp,
-                    text = uiState.club?.description ?: "",
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = {
-                        onAction(ClubDetailsIntent.JoinClub)
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+            if (uiState.isLoading) {
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp)
-                        .height(50.dp),
-                    shape = RoundedCornerShape(12.dp)
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .padding(16.dp)
+                        .verticalScroll(rememberScrollState())
+                        .background(MaterialTheme.colorScheme.background),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Join Club",
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            color = Color.White, fontWeight = FontWeight.Bold
-                        )
+                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                        textAlign = TextAlign.Center,
+                        fontSize = 24.sp,
+                        text = uiState.club?.name ?: "",
+                        modifier = Modifier.padding(bottom = 16.dp)
                     )
+
+                    InfoRow(label = "Category", value = uiState.club?.category ?: "")
+                    InfoRow(label = "President", value = "${uiState.president?.name ?: ""} ${uiState.president?.surname ?: ""}")
+
+                    Text(
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+                        textAlign = TextAlign.Start,
+                        text = "Members",
+                        fontSize = 16.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 18.dp)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    uiState.clubMembers.forEach {
+                        Card(Modifier.padding(vertical = 4.dp)) {
+                            Column(Modifier.padding(8.dp)) {
+                                Text(
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    text = it.name,
+                                    fontSize = 16.sp,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                                Text(
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    text = it.surname,
+                                    fontSize = 16.sp,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 2.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    Text(
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+                        textAlign = TextAlign.Start,
+                        fontSize = 18.sp,
+                        text = "Description",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        style = MaterialTheme.typography.bodySmall,
+                        textAlign = TextAlign.Start,
+                        fontSize = 16.sp,
+                        text = uiState.club?.description ?: "",
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(
+                        onClick = {
+                            onAction(ClubDetailsIntent.JoinClub)
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp)
+                            .height(50.dp),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(
+                            text = "Join Club",
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                color = Color.White, fontWeight = FontWeight.Bold
+                            )
+                        )
+                    }
                 }
             }
         }
@@ -181,56 +214,58 @@ private fun InfoRow(label: String, value: String) {
 @Preview
 @Composable
 private fun ClubDetailsScreenContentPrev() {
-    ClubDetailsScreenContent(name = "Title", uiState = ClubDetailsState(
-        club = ClubDetailsData(
-            id = "1",
-            name = "Club Name",
-            category = "Activity",
-            presidentId = "1",
-            members = listOf("User 1", "User 2", "User 3"),
-            description = "Description"
-        ),
-        president = StudentData(
-            id = "1",
-            name = "President",
-            surname = "Name",
-            email = "Email",
-            clubId = "1",
-            isPresident = true,
-            isWaitingApplication = "",
-            fcmToken = ""
-        ),
-        clubMembers = listOf(
-            StudentData(
+    ClubDetailsScreenContent(name = "Title",
+        uiState = ClubDetailsState(
+            isLoading = false,
+            club = ClubDetailsData(
                 id = "1",
-                name = "User 1",
+                name = "Club Name",
+                category = "Activity",
+                presidentId = "1",
+                members = listOf("User 1", "User 2", "User 3"),
+                description = "Description all something wrieted here and d d"
+            ),
+            president = StudentData(
+                id = "1",
+                name = "President",
                 surname = "Name",
                 email = "Email",
                 clubId = "1",
-                isPresident = false,
+                isPresident = true,
                 isWaitingApplication = "",
                 fcmToken = ""
             ),
-            StudentData(
-                id = "2",
-                name = "User 2",
-                surname = "Name",
-                email = "Email",
-                clubId = "1",
-                isPresident = false,
-                isWaitingApplication = "",
-                fcmToken = ""
-            ),
-            StudentData(
-                id = "3",
-                name = "User 3",
-                surname = "Name",
-                email = "Email",
-                clubId = "1",
-                isPresident = false,
-                isWaitingApplication = "",
-                fcmToken = ""
+            clubMembers = listOf(
+                StudentData(
+                    id = "1",
+                    name = "User 1",
+                    surname = "Name",
+                    email = "Email",
+                    clubId = "1",
+                    isPresident = false,
+                    isWaitingApplication = "",
+                    fcmToken = ""
+                ),
+                StudentData(
+                    id = "2",
+                    name = "User 2",
+                    surname = "Name",
+                    email = "Email",
+                    clubId = "1",
+                    isPresident = false,
+                    isWaitingApplication = "",
+                    fcmToken = ""
+                ),
+                StudentData(
+                    id = "3",
+                    name = "User 3",
+                    surname = "Name",
+                    email = "Email",
+                    clubId = "1",
+                    isPresident = false,
+                    isWaitingApplication = "",
+                    fcmToken = ""
+                )
             )
-        )
-    ), onAction = {})
+        ), onAction = {})
 }

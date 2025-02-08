@@ -55,7 +55,7 @@ class StudentRepositoryImpl @Inject constructor(
                             email = data?.get(AuthRepositoryImpl.email) as? String ?: "",
                             surname = data?.get(AuthRepositoryImpl.surname) as? String ?: "",
                             clubId = data?.get(AuthRepositoryImpl.clubId) as? String ?: "",
-                            isPresident = data?.get(AuthRepositoryImpl.isPresident) as? Boolean ?: false,
+                            isPresident = resultData.presidentId == r.id,
                             isWaitingApplication = data?.get(AuthRepositoryImpl.isWaitingApplication) as? String ?: "",
                             fcmToken = data?.get(AuthRepositoryImpl.fcmToken) as? String ?: ""
                         )
@@ -89,11 +89,12 @@ class StudentRepositoryImpl @Inject constructor(
                 email = data?.get(AuthRepositoryImpl.email) as? String ?: "",
                 surname = data?.get(AuthRepositoryImpl.surname) as? String ?: "",
                 clubId = data?.get(AuthRepositoryImpl.clubId) as? String ?: "",
-                isPresident = data?.get(AuthRepositoryImpl.isPresident) as? Boolean ?: false,
+                isPresident = false,
                 isWaitingApplication = data?.get(AuthRepositoryImpl.isWaitingApplication) as? String ?: "",
                 fcmToken = data?.get(AuthRepositoryImpl.fcmToken) as? String ?: ""
             )
-            emit(ResponseResult.Success(result))
+            val club = fireBaseHelper.getDatWithId(result.clubId, FireBaseHelper.collectionClub)?.data?.get(presidentId)
+            emit(ResponseResult.Success(result.copy(isPresident = club == userId)))
         } catch (e: IOException) {
             val data = studentDB.getById(userId)
             emit(ResponseResult.Error(NetworkError.InternetConnection(data)))
@@ -117,11 +118,12 @@ class StudentRepositoryImpl @Inject constructor(
                 email = data?.get(AuthRepositoryImpl.email) as? String ?: "",
                 surname = data?.get(AuthRepositoryImpl.surname) as? String ?: "",
                 clubId = data?.get(AuthRepositoryImpl.clubId) as? String ?: "",
-                isPresident = data?.get(AuthRepositoryImpl.isPresident) as? Boolean ?: false,
+                isPresident = false,
                 isWaitingApplication = data?.get(AuthRepositoryImpl.isWaitingApplication) as? String ?: "",
                 fcmToken = data?.get(AuthRepositoryImpl.fcmToken) as? String ?: ""
             )
-            emit(ResponseResult.Success(result))
+            val club = fireBaseHelper.getDatWithId(result.clubId, FireBaseHelper.collectionClub)?.data?.get(presidentId)
+            emit(ResponseResult.Success(result.copy(isPresident = club == localStorage.userId)))
         } catch (e: IOException) {
             val data = studentDB.getById(localStorage.userId)
             emit(ResponseResult.Error(NetworkError.InternetConnection(data)))

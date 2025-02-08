@@ -15,12 +15,15 @@ import us.smt.mylearningcentre.domen.use_case.ClubDetailsUseCase
 import us.smt.mylearningcentre.domen.use_case.ClubListUseCase
 import us.smt.mylearningcentre.domen.use_case.CreateApplicationUseCase
 import us.smt.mylearningcentre.domen.use_case.CreateNewClubUseCase
+import us.smt.mylearningcentre.domen.use_case.CreateTaskUseCase
 import us.smt.mylearningcentre.domen.use_case.HomeUseCase
 import us.smt.mylearningcentre.domen.use_case.LoginUseCase
 import us.smt.mylearningcentre.domen.use_case.RegisterUseCase
 import us.smt.mylearningcentre.domen.use_case.SettingUseCase
+import us.smt.mylearningcentre.domen.use_case.helper.application_form.AcceptApplication
 import us.smt.mylearningcentre.domen.use_case.helper.application_form.CreateApplicationToJoinClub
 import us.smt.mylearningcentre.domen.use_case.helper.application_form.GetClubApplications
+import us.smt.mylearningcentre.domen.use_case.helper.application_form.RejectApplication
 import us.smt.mylearningcentre.domen.use_case.helper.auth.Login
 import us.smt.mylearningcentre.domen.use_case.helper.auth.Register
 import us.smt.mylearningcentre.domen.use_case.helper.club.CreateClubCategories
@@ -53,13 +56,13 @@ class UseCaseModule {
     ): HomeUseCase {
         return HomeUseCase(
             getAllClubTasks = GetAllClubTasks(taskRepository = taskRepository),
-            addTask = AddTask(taskRepository = taskRepository),
-            updateTas = UpdateTask(taskRepository = taskRepository),
+            updateTask = UpdateTask(taskRepository = taskRepository),
             deleteTask = DeleteTask(taskRepository = taskRepository),
             getUser = GetUser(studentRepository = studentRepository),
-            getClubDetails = GetClubDetails(clubRepository = clubRepository),
             sendNotificationToMember = SendNotificationToMember(clubRepository = clubRepository),
-            getClubApplications = GetClubApplications(applicationRepository = applicationRepository)
+            getClubApplications = GetClubApplications(applicationRepository = applicationRepository),
+            acceptApplication = AcceptApplication(applicationRepository = applicationRepository),
+            rejectApplication = RejectApplication(applicationRepository = applicationRepository)
         )
     }
 
@@ -148,6 +151,15 @@ class UseCaseModule {
     ): CreateApplicationUseCase {
         return CreateApplicationUseCase(
             createApplicationToJoinClub = CreateApplicationToJoinClub(applicationRepository = applicationRepository),
+        )
+    }
+
+    @Provides
+    fun provideCreateTaskUseCase(
+        taskRepository: TaskRepository
+    ): CreateTaskUseCase {
+        return CreateTaskUseCase(
+            addTask = AddTask(taskRepository = taskRepository)
         )
     }
 }

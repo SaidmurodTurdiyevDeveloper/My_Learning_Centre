@@ -1,6 +1,7 @@
 package us.smt.mylearningcentre.ui.screen.application_form
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,6 +29,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import us.smt.mylearningcentre.ui.designs.MultilineTextView
+import us.smt.mylearningcentre.util.getErrorMessage
 
 class CreateApplicationScreen(private val clubId: String, private val clubName: String) : Screen {
     @Composable
@@ -41,10 +45,7 @@ class CreateApplicationScreen(private val clubId: String, private val clubName: 
         val viewModel = getViewModel<CreateApplicationViewModel>()
         val state by viewModel.state.collectAsState()
         CreateApplicationScreenContent(
-            state = state,
-            clubName = clubName,
-            clubId = clubId,
-            onAction = viewModel::onAction
+            state = state, clubName = clubName, clubId = clubId, onAction = viewModel::onAction
         )
     }
 }
@@ -52,28 +53,51 @@ class CreateApplicationScreen(private val clubId: String, private val clubName: 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CreateApplicationScreenContent(
-    state: CreateApplicationState,
-    clubName: String,
-    clubId: String,
-    onAction: (CreateApplicationIntent) -> Unit
+    state: CreateApplicationState, clubName: String, clubId: String, onAction: (CreateApplicationIntent) -> Unit
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = "Create New Application") },
-                navigationIcon = {
-                    IconButton(onClick = { onAction(CreateApplicationIntent.Back) }) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
-                )
+    Scaffold(topBar = {
+        TopAppBar(
+            title = { Text(text = "Create New Application") },
+            navigationIcon = {
+                IconButton(onClick = { onAction(CreateApplicationIntent.Back) }) {
+                    Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                }
+            }, colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primary, titleContentColor = MaterialTheme.colorScheme.onPrimary, navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
             )
-        },
-        content = { paddingValues ->
+        )
+    }, content = { paddingValues ->
+        if (state.loading) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp)
+                    .background(MaterialTheme.colorScheme.background),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else if (state.error != null) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp)
+                    .background(MaterialTheme.colorScheme.background),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = getErrorMessage(state.error),
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.error,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+            }
+        } else {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -82,19 +106,14 @@ private fun CreateApplicationScreenContent(
                     .verticalScroll(rememberScrollState())
                     .background(MaterialTheme.colorScheme.background)
             ) {
-
+                Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "You ar joining this club $clubName.",
-                    style = MaterialTheme.typography.bodyLarge.copy(
+                    text = "You ar joining this club $clubName.", style = MaterialTheme.typography.bodyLarge.copy(
                         color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold
                     )
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                MultilineTextView(
-                    hint = "Description",
-                    state = state.description,
-                    onChange = { description -> onAction(CreateApplicationIntent.ChangeDescription(description)) }
-                )
+                MultilineTextView(hint = "Write application description", state = state.description, onChange = { description -> onAction(CreateApplicationIntent.ChangeDescription(description)) })
 
                 // Save Button
                 Button(
@@ -109,13 +128,15 @@ private fun CreateApplicationScreenContent(
                     Text(
                         text = "Join Club",
                         style = MaterialTheme.typography.bodyLarge.copy(
-                            color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            fontWeight = FontWeight.Bold
                         )
                     )
                 }
             }
         }
-    )
+
+    })
 
 }
 

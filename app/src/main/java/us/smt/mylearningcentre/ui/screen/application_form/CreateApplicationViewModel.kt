@@ -36,6 +36,7 @@ class CreateApplicationViewModel @Inject constructor(
             update(state = state.value.copy(description = state.value.description.copy(error = TextViewError.Empty)))
             return
         }
+        update(state = state.value.copy(loading = true))
         useCase.createApplicationToJoinClub(
             data = CreateApplicationFormData(
                 clubId = clubId,
@@ -43,7 +44,7 @@ class CreateApplicationViewModel @Inject constructor(
             )
         ).onEach { result ->
             when (result) {
-                is ResponseResult.Error -> update(state = state.value.copy(error = result.error))
+                is ResponseResult.Error -> update(state = state.value.copy(error = result.error, loading = false))
                 is ResponseResult.Success -> {
                     navigate(WaitingScreen())
                 }

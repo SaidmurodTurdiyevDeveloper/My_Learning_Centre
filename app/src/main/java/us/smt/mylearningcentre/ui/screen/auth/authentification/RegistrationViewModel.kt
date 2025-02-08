@@ -30,7 +30,12 @@ class RegistrationViewModel @Inject constructor(
             is RegistrationIntent.RePasswordChanged -> changeConfirmPassword(intent.password)
             RegistrationIntent.Back -> back()
             RegistrationIntent.Register -> register()
+            RegistrationIntent.CloseError -> closeError()
         }
+    }
+
+    private fun closeError() {
+        update(state = state.value.copy(error = null))
     }
 
     private fun changeName(name: String) {
